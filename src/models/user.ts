@@ -4,7 +4,7 @@ interface User {
   username: string;
   avatarURL?: string;
   email: string;
-  notes?: Types.ObjectId[];
+  tasks?: Types.ObjectId[];
   isActive: boolean;
 }
 
@@ -24,10 +24,10 @@ const UserSchema = new Schema(
       required: true,
       unique: true,
     },
-    notes: [
+    tasks: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Note",
+        ref: "Task",
       },
     ],
     isActive: {
