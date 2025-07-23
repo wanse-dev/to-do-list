@@ -13,10 +13,10 @@ const router = express.Router();
 
 router.post("/", createUser);
 router.get("/", getUsers);
-router.get("/:id", getUserById);
-router.put("/update/:id", updateUser);
-router.patch("/disable/:id", disableUser);
-router.patch("/enable/:id", enableUser);
-router.delete("/:id", deleteUser);
+router.get("/:firebaseUid", getUserById);
+router.put("/update/:firebaseUid", updateUser);
+router.patch("/disable/:firebaseUid", disableUser);
+router.patch("/enable/:firebaseUid", enableUser);
+router.delete("/:firebaseUid", deleteUser);
 
 export default router;

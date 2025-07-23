@@ -57,10 +57,9 @@ const getTaskById = async (req: Request, res: Response) => {
 };
 
 const getTasksByUser = async (req: Request, res: Response) => {
-  const { firebaseUid } = req.params;
+  const { firebaseUid } = req.params; // en vez de userId, traigo el UID de firebase
   try {
-    const user = await User.findById(firebaseUid).populate("tasks");
-
+    const user = await User.findOne({ firebaseUid }).populate("tasks");
     if (!user) {
       res.status(404).json({
         message: "User not found",
@@ -72,7 +71,7 @@ const getTasksByUser = async (req: Request, res: Response) => {
     res.status(200).json({
       message: "Tasks obtained successfully",
       error: false,
-      data: user.tasks,
+      data: user.tasks || [],
     });
   } catch (error: any) {
     res.status(400).json({

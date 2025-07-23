@@ -35,7 +35,7 @@ const getUsers = async (req: Request, res: Response) => {
 const getUserById = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
-    const user = await User.findById(firebaseUid);
+    const user = await User.findOne({ firebaseUid }); // en vez de findById, uso FindOne para traer el UID de firebase
     if (!user) {
       res.status(404).json({
         message: "User not found",
@@ -58,11 +58,9 @@ const getUserById = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
-    const user = await User.findByIdAndUpdate(
-      firebaseUid,
-      {
-        $set: req.body,
-      },
+    const user = await User.findOneAndUpdate(
+      { firebaseUid }, 
+      { $set: req.body },
       { new: true }
     );
     if (!user) {
@@ -87,8 +85,8 @@ const updateUser = async (req: Request, res: Response) => {
 const disableUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
-    const user = await User.findByIdAndUpdate(
-      firebaseUid,
+    const user = await User.findOneAndUpdate(
+      { firebaseUid }, 
       { isActive: false },
       { new: true }
     );
@@ -114,8 +112,8 @@ const disableUser = async (req: Request, res: Response) => {
 const enableUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
-    const user = await User.findByIdAndUpdate(
-      firebaseUid,
+    const user = await User.findOneAndUpdate(
+      { firebaseUid }, 
       { isActive: true },
       { new: true }
     );
@@ -141,7 +139,7 @@ const enableUser = async (req: Request, res: Response) => {
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
-    const user = await User.findByIdAndDelete(firebaseUid);
+    const user = await User.findOneAndDelete({ firebaseUid });
     if (!user) {
       res.status(404).json({
         message: "User not found",
