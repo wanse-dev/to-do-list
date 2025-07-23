@@ -57,9 +57,9 @@ const getTaskById = async (req: Request, res: Response) => {
 };
 
 const getTasksByUser = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { firebaseUid } = req.params;
   try {
-    const user = await User.findById(id).populate("tasks");
+    const user = await User.findById(firebaseUid).populate("tasks");
 
     if (!user) {
       res.status(404).json({

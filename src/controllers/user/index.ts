@@ -34,8 +34,8 @@ const getUsers = async (req: Request, res: Response) => {
 
 const getUserById = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id);
+    const { firebaseUid } = req.params;
+    const user = await User.findById(firebaseUid);
     if (!user) {
       res.status(404).json({
         message: "User not found",
@@ -57,9 +57,9 @@ const getUserById = async (req: Request, res: Response) => {
 
 const updateUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { firebaseUid } = req.params;
     const user = await User.findByIdAndUpdate(
-      id,
+      firebaseUid,
       {
         $set: req.body,
       },
@@ -86,9 +86,9 @@ const updateUser = async (req: Request, res: Response) => {
 
 const disableUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { firebaseUid } = req.params;
     const user = await User.findByIdAndUpdate(
-      id,
+      firebaseUid,
       { isActive: false },
       { new: true }
     );
@@ -113,9 +113,9 @@ const disableUser = async (req: Request, res: Response) => {
 
 const enableUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { firebaseUid } = req.params;
     const user = await User.findByIdAndUpdate(
-      id,
+      firebaseUid,
       { isActive: true },
       { new: true }
     );
@@ -140,8 +140,8 @@ const enableUser = async (req: Request, res: Response) => {
 
 const deleteUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
+    const { firebaseUid } = req.params;
+    const user = await User.findByIdAndDelete(firebaseUid);
     if (!user) {
       res.status(404).json({
         message: "User not found",

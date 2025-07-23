@@ -1,6 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 
 interface User {
+  firebaseUid: string;
   username: string;
   avatarURL?: string;
   email: string;
@@ -10,6 +11,11 @@ interface User {
 
 const UserSchema = new Schema(
   {
+    firebaseUid: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     username: {
       type: String,
       required: true,
