@@ -4,6 +4,7 @@ import {
   getTasks,
   getTaskById,
   getTasksByUser,
+  assignTaskToUser,
   updateTitle,
   completeTask,
   undoneTask,
@@ -18,6 +19,7 @@ router.post("/", createTask);
 router.get("/", getTasks);
 router.get("/:id", getTaskById);
 router.get("/user/:firebaseUid", getTasksByUser);
+router.patch("/assignToUser/:firebaseUid", assignTaskToUser);
 router.put("/update/:id", updateTitle);
 router.patch("/complete/:id", completeTask);
 router.patch("/undone/:id", undoneTask);
