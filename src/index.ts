@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
- connectDB();
+connectDB();
 
 app.get("/", (req, res) => {
   res.send("Server working properly!");
