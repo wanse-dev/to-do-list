@@ -6,6 +6,7 @@ interface User {
   avatarURL?: string;
   email: string;
   tasks?: Types.ObjectId[];
+  folders?: Types.ObjectId[];
   isActive: boolean;
 }
 
@@ -34,6 +35,12 @@ const UserSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: "Task",
+      },
+    ],
+    folders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Folder",
       },
     ],
     isActive: {
