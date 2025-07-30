@@ -3,7 +3,6 @@ import mongoose, { Types, Schema } from "mongoose";
 interface Folder {
   title: string;
   tasks?: Types.ObjectId[];
-  isActive: boolean;
 }
 
 const FolderSchema = new Schema(
@@ -19,10 +18,6 @@ const FolderSchema = new Schema(
         ref: "Task",
       },
     ],
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
     timestamps: true,

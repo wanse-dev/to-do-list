@@ -1,13 +1,15 @@
 import Task from "../../models/task";
+import Folder from "../../models/folder";
 import User from "../../models/user";
 import { Request, Response } from "express";
 
 const createTask = async (req: Request, res: Response) => {
   try {
-    const { firebaseUid } = req.body;
-    if (!firebaseUid) {
+    const { firebaseUid, folderId, title, isCompleted, isActive } = req.body;
+
+    if (!firebaseUid || !folderId) {
       res.status(400).json({
-        message: "firebaseUID is required",
+        message: "firebaseUID and folderID are required",
         error: true,
       });
       return;
@@ -25,14 +27,38 @@ const createTask = async (req: Request, res: Response) => {
       user.tasks = [];
     }
 
-    // creo una nueva task y la asigno al user
-    const task = new Task(req.body);
+    const folder = await Folder.findById(folderId);
+    if (!folder) {
+      res.status(404).json({
+        message: "Folder not found",
+        error: true,
+      });
+      return;
+    }
+    if (!folder.tasks) {
+      folder.tasks = [];
+    }
+
+    // creo un objeto task con los datos del req.body 
+    const newTask = {
+      title,
+      isCompleted: isCompleted !== undefined ? isCompleted : false,
+      isActive: isActive !== undefined ? isActive : true,
+      folder: folderId,
+      user: user._id,
+    };
+
+    const task = new Task(newTask);
     await task.save();
+
     user.tasks.push(task._id);
     await user.save();
 
+    folder.tasks.push(task._id);
+    await folder.save();
+
     res.status(201).json({
-      message: "Task created and assigned to user successfully",
+      message: "Task created and assigned to user and folder successfully",
       data: task,
       error: false,
     });
@@ -97,6 +123,23 @@ const getTasksByUser = async (req: Request, res: Response) => {
       message: "Tasks obtained successfully",
       error: false,
       data: user.tasks || [],
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      error: error.message,
+    });
+  }
+};
+
+const getTasksByFolder = async (req: Request, res: Response) => {
+  try {
+    const { folderId } = req.params;
+    const tasks = await Task.find({ folder: folderId, isActive: true });
+
+    res.status(200).json({
+      message: "Tasks by folder obtained successfully",
+      data: tasks,
+      error: false,
     });
   } catch (error: any) {
     res.status(400).json({
@@ -293,6 +336,7 @@ export {
   getTasks,
   getTaskById,
   getTasksByUser,
+  getTasksByFolder,
   updateTitle,
   completeTask,
   undoneTask,

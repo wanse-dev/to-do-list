@@ -153,16 +153,32 @@ const deleteFolder = async (req: Request, res: Response) => {
       return;
     }
 
-    // quito la referencia de la folder del array de folders del usuario
+    // obtengo los IDs de las tasks que pertenecen a esta folder
+    const tasksInFolder = await Task.find({ folder: id });
+    const taskIdsToRemoveFromUser = tasksInFolder.map((task) => task._id);
+
+    // quito las referencias de estas tasks del array de tasks del user
+    if (user.tasks && taskIdsToRemoveFromUser.length > 0) {
+      // filtro el array de tasks del user para eliminar las tasks de la folder eliminada
+      user.tasks = user.tasks.filter(
+        (taskId: any) =>
+          !taskIdsToRemoveFromUser.some((idToRemove) =>
+            idToRemove.equals(taskId)
+          )
+      );
+      await user.save(); // guardo el user con el array de tasks actualizado
+    }
+
+    // quito la referencia de la folder del array de folders del user
     user.folders = user.folders?.filter(
       (folderId: any) => folderId.toString() !== id
     );
     await user.save();
 
-    // elimino todas las tasks asociadas a la carpeta
+    // elimino físicamente todas las tasks asociadas a esta folder
     await Task.deleteMany({ folder: id });
 
-    // y finalmente elimino la carpeta en si
+    // elimino la carpeta en sí
     const deletedFolder = await Folder.findByIdAndDelete(id);
     if (!deletedFolder) {
       res.status(404).json({

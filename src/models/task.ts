@@ -1,9 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 
 interface Task {
   title: string;
   isCompleted: boolean;
   isActive: boolean;
+  folder?: Types.ObjectId;
+  user?: Types.ObjectId;
 }
 
 const TaskSchema = new Schema(
@@ -19,6 +21,14 @@ const TaskSchema = new Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    folder: {
+      type: Schema.Types.ObjectId,
+      ref: "Folder",
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   {
