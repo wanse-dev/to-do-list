@@ -12,6 +12,7 @@ const createTask = async (req: Request, res: Response) => {
       });
       return;
     }
+
     const user = await User.findOne({ firebaseUid });
     if (!user) {
       res.status(404).json({
@@ -23,6 +24,7 @@ const createTask = async (req: Request, res: Response) => {
     if (!user.tasks) {
       user.tasks = [];
     }
+
     // creo una nueva task y la asigno al user
     const task = new Task(req.body);
     await task.save();
@@ -80,8 +82,8 @@ const getTaskById = async (req: Request, res: Response) => {
 };
 
 const getTasksByUser = async (req: Request, res: Response) => {
-  const { firebaseUid } = req.params; // en vez de userId, traigo el UID de firebase
   try {
+    const { firebaseUid } = req.params; // en vez de userId, traigo el UID de firebase
     const user = await User.findOne({ firebaseUid }).populate("tasks");
     if (!user) {
       res.status(404).json({

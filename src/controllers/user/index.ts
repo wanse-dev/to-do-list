@@ -59,7 +59,7 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
     const user = await User.findOneAndUpdate(
-      { firebaseUid }, 
+      { firebaseUid },
       { $set: req.body },
       { new: true }
     );
@@ -86,7 +86,7 @@ const disableUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
     const user = await User.findOneAndUpdate(
-      { firebaseUid }, 
+      { firebaseUid },
       { isActive: false },
       { new: true }
     );
@@ -113,7 +113,7 @@ const enableUser = async (req: Request, res: Response) => {
   try {
     const { firebaseUid } = req.params;
     const user = await User.findOneAndUpdate(
-      { firebaseUid }, 
+      { firebaseUid },
       { isActive: true },
       { new: true }
     );
