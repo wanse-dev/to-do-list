@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const index_1 = require("../../controllers/task/index");
+const router = express_1.default.Router();
+router.post("/", index_1.createTask);
+router.get("/", index_1.getTasks);
+router.get("/:id", index_1.getTaskById);
+router.get("/user/:firebaseUid", index_1.getTasksByUser);
+router.get("/folder/:folderId", index_1.getTasksByFolder);
+router.patch("/update/:id", index_1.updateTitle);
+router.patch("/complete/:id", index_1.completeTask);
+router.patch("/undone/:id", index_1.undoneTask);
+router.patch("/disable/:id", index_1.disableTask);
+router.patch("/enable/:id", index_1.enableTask);
+router.delete("/:id/:firebaseUid", index_1.deleteTask);
+exports.default = router;
