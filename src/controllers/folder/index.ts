@@ -2,6 +2,7 @@ import Folder from "../../models/folder";
 import Task from "../../models/task";
 import User from "../../models/user";
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 
 const createFolder = async (req: Request, res: Response) => {
   try {
@@ -161,8 +162,8 @@ const deleteFolder = async (req: Request, res: Response) => {
     if (user.tasks && taskIdsToRemoveFromUser.length > 0) {
       // filtro el array de tasks del user para eliminar las tasks de la folder eliminada
       user.tasks = user.tasks.filter(
-        (taskId: any) =>
-          !taskIdsToRemoveFromUser.some((idToRemove) =>
+        (taskId: mongoose.Types.ObjectId) =>
+          !taskIdsToRemoveFromUser.some((idToRemove: mongoose.Types.ObjectId) =>
             idToRemove.equals(taskId)
           )
       );
