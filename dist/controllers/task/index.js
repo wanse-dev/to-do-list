@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,7 +7,7 @@ exports.deleteTask = exports.enableTask = exports.disableTask = exports.undoneTa
 const task_1 = __importDefault(require("../../models/task"));
 const folder_1 = __importDefault(require("../../models/folder"));
 const user_1 = __importDefault(require("../../models/user"));
-const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createTask = async (req, res) => {
     try {
         const { firebaseUid, folderId, title, isCompleted, isActive } = req.body;
         if (!firebaseUid || !folderId) {
@@ -26,7 +17,7 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             });
             return;
         }
-        const user = yield user_1.default.findOne({ firebaseUid });
+        const user = await user_1.default.findOne({ firebaseUid });
         if (!user) {
             res.status(404).json({
                 message: "User not found",
@@ -37,7 +28,7 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!user.tasks) {
             user.tasks = [];
         }
-        const folder = yield folder_1.default.findById(folderId);
+        const folder = await folder_1.default.findById(folderId);
         if (!folder) {
             res.status(404).json({
                 message: "Folder not found",
@@ -57,11 +48,11 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             user: user._id,
         };
         const task = new task_1.default(newTask);
-        yield task.save();
+        await task.save();
         user.tasks.push(task._id);
-        yield user.save();
+        await user.save();
         folder.tasks.push(task._id);
-        yield folder.save();
+        await folder.save();
         res.status(201).json({
             message: "Task created and assigned to user and folder successfully",
             data: task,
@@ -73,11 +64,11 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             error: error.message,
         });
     }
-});
+};
 exports.createTask = createTask;
-const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getTasks = async (req, res) => {
     try {
-        const tasks = yield task_1.default.find();
+        const tasks = await task_1.default.find();
         res.status(200).json({
             message: "Tasks obtained successfully",
             data: tasks,
@@ -89,12 +80,12 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             error: error.message,
         });
     }
-});
+};
 exports.getTasks = getTasks;
-const getTaskById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getTaskById = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = yield task_1.default.findById(id);
+        const task = await task_1.default.findById(id);
         if (!task) {
             res.status(404).json({
                 message: "Task not found",
@@ -113,12 +104,12 @@ const getTaskById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             error: error.message,
         });
     }
-});
+};
 exports.getTaskById = getTaskById;
-const getTasksByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getTasksByUser = async (req, res) => {
     try {
         const { firebaseUid } = req.params; // en vez de userId, traigo el UID de firebase
-        const user = yield user_1.default.findOne({ firebaseUid }).populate("tasks");
+        const user = await user_1.default.findOne({ firebaseUid }).populate("tasks");
         if (!user) {
             res.status(404).json({
                 message: "User not found",
@@ -138,12 +129,12 @@ const getTasksByUser = (req, res) => __awaiter(void 0, void 0, void 0, function*
             error: error.message,
         });
     }
-});
+};
 exports.getTasksByUser = getTasksByUser;
-const getTasksByFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getTasksByFolder = async (req, res) => {
     try {
         const { folderId } = req.params;
-        const tasks = yield task_1.default.find({ folder: folderId, isActive: true });
+        const tasks = await task_1.default.find({ folder: folderId, isActive: true });
         res.status(200).json({
             message: "Tasks by folder obtained successfully",
             data: tasks,
@@ -155,12 +146,12 @@ const getTasksByFolder = (req, res) => __awaiter(void 0, void 0, void 0, functio
             error: error.message,
         });
     }
-});
+};
 exports.getTasksByFolder = getTasksByFolder;
-const updateTitle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateTitle = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = yield task_1.default.findByIdAndUpdate(id, { title: req.body.title }, { new: true });
+        const task = await task_1.default.findByIdAndUpdate(id, { title: req.body.title }, { new: true });
         if (!task) {
             res.status(404).json({
                 message: "Task not found",
@@ -179,12 +170,12 @@ const updateTitle = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             error: error.message,
         });
     }
-});
+};
 exports.updateTitle = updateTitle;
-const completeTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const completeTask = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = yield task_1.default.findByIdAndUpdate(id, { isCompleted: true }, { new: true });
+        const task = await task_1.default.findByIdAndUpdate(id, { isCompleted: true }, { new: true });
         if (!task) {
             res.status(404).json({
                 message: "Task not found",
@@ -203,12 +194,12 @@ const completeTask = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             error: error.message,
         });
     }
-});
+};
 exports.completeTask = completeTask;
-const undoneTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const undoneTask = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = yield task_1.default.findByIdAndUpdate(id, { isCompleted: false }, { new: true });
+        const task = await task_1.default.findByIdAndUpdate(id, { isCompleted: false }, { new: true });
         if (!task) {
             res.status(404).json({
                 message: "Task not found",
@@ -227,12 +218,12 @@ const undoneTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             error: error.message,
         });
     }
-});
+};
 exports.undoneTask = undoneTask;
-const disableTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const disableTask = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = yield task_1.default.findByIdAndUpdate(id, { isActive: false }, { new: true });
+        const task = await task_1.default.findByIdAndUpdate(id, { isActive: false }, { new: true });
         if (!task) {
             res.status(404).json({
                 message: "Task not found",
@@ -251,12 +242,12 @@ const disableTask = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             error: error.message,
         });
     }
-});
+};
 exports.disableTask = disableTask;
-const enableTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const enableTask = async (req, res) => {
     try {
         const { id } = req.params;
-        const task = yield task_1.default.findByIdAndUpdate(id, { isActive: true }, { new: true });
+        const task = await task_1.default.findByIdAndUpdate(id, { isActive: true }, { new: true });
         if (!task) {
             res.status(404).json({
                 message: "Task not found",
@@ -275,9 +266,9 @@ const enableTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             error: error.message,
         });
     }
-});
+};
 exports.enableTask = enableTask;
-const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteTask = async (req, res) => {
     try {
         const { id, firebaseUid } = req.params;
         if (!firebaseUid) {
@@ -287,8 +278,8 @@ const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             });
             return;
         }
-        const user = yield user_1.default.findOneAndUpdate({ firebaseUid }, { $pull: { tasks: id } }, { new: true });
-        const task = yield task_1.default.findByIdAndDelete(id);
+        const user = await user_1.default.findOneAndUpdate({ firebaseUid }, { $pull: { tasks: id } }, { new: true });
+        const task = await task_1.default.findByIdAndDelete(id);
         if (!user) {
             res.status(404).json({
                 message: "User not found",
@@ -314,5 +305,6 @@ const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             error: error.message,
         });
     }
-});
+};
 exports.deleteTask = deleteTask;
+//# sourceMappingURL=index.js.map

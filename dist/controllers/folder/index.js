@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,7 +7,7 @@ exports.deleteFolder = exports.updateTitle = exports.getFoldersByUser = exports.
 const folder_1 = __importDefault(require("../../models/folder"));
 const task_1 = __importDefault(require("../../models/task"));
 const user_1 = __importDefault(require("../../models/user"));
-const createFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createFolder = async (req, res) => {
     try {
         const { firebaseUid } = req.body;
         if (!firebaseUid) {
@@ -26,7 +17,7 @@ const createFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
             return;
         }
-        const user = yield user_1.default.findOne({ firebaseUid });
+        const user = await user_1.default.findOne({ firebaseUid });
         if (!user) {
             res.status(404).json({
                 message: "Folder not found",
@@ -38,9 +29,9 @@ const createFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             user.folders = [];
         }
         const folder = new folder_1.default(req.body);
-        yield folder.save();
+        await folder.save();
         user.folders.push(folder._id);
-        yield user.save();
+        await user.save();
         res.status(201).json({
             message: "Folder created and assigned to user successfully",
             data: folder,
@@ -52,11 +43,11 @@ const createFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             error: error.message,
         });
     }
-});
+};
 exports.createFolder = createFolder;
-const getFolders = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getFolders = async (req, res) => {
     try {
-        const folders = yield folder_1.default.find();
+        const folders = await folder_1.default.find();
         res.status(200).json({
             message: "Folders obtained successfully",
             data: folders,
@@ -68,12 +59,12 @@ const getFolders = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             error: error.message,
         });
     }
-});
+};
 exports.getFolders = getFolders;
-const getFolderById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getFolderById = async (req, res) => {
     try {
         const { id } = req.params;
-        const folder = yield folder_1.default.findById(id);
+        const folder = await folder_1.default.findById(id);
         if (!folder) {
             res.status(404).json({
                 message: "Folder not found",
@@ -92,12 +83,12 @@ const getFolderById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             error: error.message,
         });
     }
-});
+};
 exports.getFolderById = getFolderById;
-const getFoldersByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getFoldersByUser = async (req, res) => {
     try {
         const { firebaseUid } = req.params;
-        const user = yield user_1.default.findOne({ firebaseUid }).populate("folders");
+        const user = await user_1.default.findOne({ firebaseUid }).populate("folders");
         if (!user) {
             res.status(404).json({
                 message: "User not found",
@@ -117,12 +108,12 @@ const getFoldersByUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
             error: error.message,
         });
     }
-});
+};
 exports.getFoldersByUser = getFoldersByUser;
-const updateTitle = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateTitle = async (req, res) => {
     try {
         const { id } = req.params;
-        const folder = yield folder_1.default.findByIdAndUpdate(id, { title: req.body.title }, { new: true });
+        const folder = await folder_1.default.findByIdAndUpdate(id, { title: req.body.title }, { new: true });
         if (!folder) {
             res.status(404).json({
                 message: "Folder not found",
@@ -141,10 +132,9 @@ const updateTitle = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             error: error.message,
         });
     }
-});
+};
 exports.updateTitle = updateTitle;
-const deleteFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const deleteFolder = async (req, res) => {
     try {
         const { id, firebaseUid } = req.params;
         if (!firebaseUid) {
@@ -154,7 +144,7 @@ const deleteFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
             return;
         }
-        const user = yield user_1.default.findOne({ firebaseUid });
+        const user = await user_1.default.findOne({ firebaseUid });
         if (!user) {
             res.status(404).json({
                 message: "User not found",
@@ -163,21 +153,21 @@ const deleteFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return;
         }
         // obtengo los IDs de las tasks que pertenecen a esta folder
-        const tasksInFolder = yield task_1.default.find({ folder: id });
+        const tasksInFolder = await task_1.default.find({ folder: id });
         const taskIdsToRemoveFromUser = tasksInFolder.map((task) => task._id);
         // quito las referencias de estas tasks del array de tasks del user
         if (user.tasks && taskIdsToRemoveFromUser.length > 0) {
             // filtro el array de tasks del user para eliminar las tasks de la folder eliminada
             user.tasks = user.tasks.filter((taskId) => !taskIdsToRemoveFromUser.some((idToRemove) => idToRemove.equals(taskId)));
-            yield user.save(); // guardo el user con el array de tasks actualizado
+            await user.save(); // guardo el user con el array de tasks actualizado
         }
         // quito la referencia de la folder del array de folders del user
-        user.folders = (_a = user.folders) === null || _a === void 0 ? void 0 : _a.filter((folderId) => folderId.toString() !== id);
-        yield user.save();
+        user.folders = user.folders?.filter((folderId) => folderId.toString() !== id);
+        await user.save();
         // elimino físicamente todas las tasks asociadas a esta folder
-        yield task_1.default.deleteMany({ folder: id });
+        await task_1.default.deleteMany({ folder: id });
         // elimino la carpeta en sí
-        const deletedFolder = yield folder_1.default.findByIdAndDelete(id);
+        const deletedFolder = await folder_1.default.findByIdAndDelete(id);
         if (!deletedFolder) {
             res.status(404).json({
                 message: "Folder not found",
@@ -195,5 +185,6 @@ const deleteFolder = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             error: error.message,
         });
     }
-});
+};
 exports.deleteFolder = deleteFolder;
+//# sourceMappingURL=index.js.map

@@ -12,3 +12,4 @@ router.use("/users", user_1.default);
 router.use("/task", task_1.default);
 router.use("/folder", folder_1.default);
 exports.default = router;
+//# sourceMappingURL=index.js.map

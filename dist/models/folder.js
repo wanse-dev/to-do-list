@@ -51,3 +51,4 @@ const FolderSchema = new mongoose_1.Schema({
 });
 const Folder = mongoose_1.default.model("Folder", FolderSchema);
 exports.default = Folder;
+//# sourceMappingURL=folder.js.map

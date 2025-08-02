@@ -18,3 +18,4 @@ router.patch("/disable/:id", index_1.disableTask);
 router.patch("/enable/:id", index_1.enableTask);
 router.delete("/:id/:firebaseUid", index_1.deleteTask);
 exports.default = router;
+//# sourceMappingURL=index.js.map

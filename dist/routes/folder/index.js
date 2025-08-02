@@ -13,3 +13,4 @@ router.get("/user/:firebaseUid", index_1.getFoldersByUser);
 router.patch("/update/:id", index_1.updateTitle);
 router.delete("/:id/:firebaseUid", index_1.deleteFolder);
 exports.default = router;
+//# sourceMappingURL=index.js.map

@@ -14,3 +14,4 @@ router.patch("/disable/:firebaseUid", index_1.disableUser);
 router.patch("/enable/:firebaseUid", index_1.enableUser);
 router.delete("/:firebaseUid", index_1.deleteUser);
 exports.default = router;
+//# sourceMappingURL=index.js.map
