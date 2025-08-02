@@ -4,10 +4,26 @@ import "dotenv/config";
 import routes from "./routes/index";
 import connectDB from "./database";
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://work-tasks-management.netlify.app",
+];
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: 'https://work-tasks-management.netlify.app' }));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 connectDB();
