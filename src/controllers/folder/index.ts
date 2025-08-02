@@ -172,7 +172,7 @@ const deleteFolder = async (req: Request, res: Response) => {
 
     // quito la referencia de la folder del array de folders del user
     user.folders = user.folders?.filter(
-      (folderId: any) => folderId.toString() !== id
+      (folderId: mongoose.Types.ObjectId) => folderId.toString() !== id
     );
     await user.save();
 
