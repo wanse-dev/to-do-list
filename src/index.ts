@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from 'express';
 import cors from "cors";
 import "dotenv/config";
 import routes from "./routes/index";
@@ -12,7 +12,7 @@ app.use(express.json());
 
 connectDB();
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Server working properly!");
 });
 
