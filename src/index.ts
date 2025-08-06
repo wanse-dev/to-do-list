@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
 import routes from "./routes/index";
@@ -30,6 +30,10 @@ connectDB();
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Server working properly!");
+});
+
+app.get("/ping", (req: Request, res: Response) => {
+  res.status(200).send("OK");
 });
 
 app.use("/api", routes);
